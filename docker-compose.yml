@@ -1,0 +1,35 @@
+version: "3.7"
+
+services:
+  api:
+    build:
+      context: ./DockerFiles/php-8.2_openswoole-22
+      dockerfile: Dockerfile
+#    ports:
+#      - "8000:8000"
+    volumes:
+#      - ./build/api/php.ini:/usr/local/etc/php.ini:ro
+      - ./configs/opencv.ini:/etc/php/8.2/cli/conf.d/opencv.ini
+      - ./api:/var/www/api:delegated
+    devices:
+      - /dev/video0:/dev/video0
+      - /dev/video1:/dev/video1
+#    healthcheck:
+#      test: bash -c "</dev/tcp/api/8000 && exit 0 || exit 1"
+#      interval: 6s
+#      timeout: 180s
+#      retries: 30
+    working_dir: /var/www/api
+#    command: bash -c "php -i | grep swoole -1 | grep Version"
+    command: bash -c "php test.php"
+#    command: bash -c "video4linux2"
+#    command: bash -c "cat /etc/php/8.2/cli/conf.d/opencv.ini"
+#    command: bash -c "ffmpeg -f v4l2 -i /dev/video0 -vframes 1 1.jpg"
+
+volumes:
+  sources:
+    driver: local
+    driver_opts:
+      type: none
+      device: $PWD/
+      o: bind
